@@ -1,7 +1,7 @@
 {
 	"name": "atomic-notes-extractor",
 	"version": "1.0.0",
-	"description": "Atomic Notes Extractor for Obsidian: turn clippings into atomic notes via LLM providers.",
+	"description": "ANEx (Atomic Notes Extractor) for Obsidian: turn clippings into atomic notes via LLM providers.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

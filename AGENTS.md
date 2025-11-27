@@ -2,6 +2,7 @@
 
 ## Project overview
 
+- Project: **ANEx (Atomic Notes Extractor)** — RSA-Core aligned extraction plugin.
 - Target: Obsidian Community Plugin (TypeScript → bundled JavaScript).
 - Entry point: `main.ts` compiled to `main.js` and loaded by Obsidian.
 - Required release artifacts: `main.js`, `manifest.json`, and optional `styles.css`.

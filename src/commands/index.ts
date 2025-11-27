@@ -14,7 +14,7 @@ export function registerCommands(plugin: Plugin, services: CommandServices) {
 
 	plugin.addCommand({
 		id: "anex-extract-active-file",
-		name: "Extract atomic notes from active file",
+		name: "Extract Active File",
 		checkCallback: (checking: boolean) => {
 			const file = plugin.app.workspace.getActiveFile();
 			if (!file) return false;
@@ -27,7 +27,7 @@ export function registerCommands(plugin: Plugin, services: CommandServices) {
 
 	plugin.addCommand({
 		id: "anex-process-all-clippings",
-		name: "Process all unprocessed clippings in folder",
+		name: "Extract from Clippings Folder",
 		callback: () => {
 			void folderWatcher.processAllUnprocessedFiles();
 		},

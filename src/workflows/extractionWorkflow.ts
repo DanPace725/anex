@@ -6,6 +6,7 @@ import { AtomicNoteBuilder } from "../services/noteBuilder";
 import { AtomicNoteWriter } from "../services/noteWriter";
 import { ProcessedMarkerService } from "../services/processedMarker";
 import { StatusIndicatorService } from "../services/statusIndicator";
+import { formatWikiLink } from "../utils/links";
 
 export class ExtractionWorkflow {
 	constructor(
@@ -44,13 +45,22 @@ export class ExtractionWorkflow {
 				notes,
 				this.settings.outputFolder,
 				this.settings.allowOverwrite,
-				(note) => this.noteBuilder.filenameFor(note)
+				(note) => this.noteBuilder.filenameFor(note),
+				{
+					sourcePropertyName: this.settings.sourceClippingPropertyName,
+					sourceLinkFormat: this.settings.sourceLinkFormat,
+				}
 			);
 
-			await this.processedMarker.markProcessed(file, { notePaths });
+			const noteLinks = this.buildNoteLinks(notePaths, notes);
 
-			// Add links from source clipping to atomic notes
-			await this.addAtomicNotesLinksToClipping(file, notePaths);
+			await this.processedMarker.markProcessed(file, {
+				noteLinks: this.settings.storeNoteLinksInFrontmatter ? noteLinks : undefined,
+			});
+
+			if (this.settings.writeNoteLinksToFooter) {
+				await this.addAtomicNotesLinksToClipping(file, noteLinks);
+			}
 
 			// Indicate processing completed successfully
 			this.statusIndicator?.finishProcessing(file, true, notes.length);
@@ -75,6 +85,23 @@ export class ExtractionWorkflow {
 			throw new Error("Invalid idea limits. Min ideas must be ≥ 1 and max ideas must be ≥ min ideas.");
 		}
 
+		const propertyNamePattern = /^[A-Za-z0-9_-]+$/;
+		if (!propertyNamePattern.test(this.settings.sourceClippingPropertyName)) {
+			throw new Error("Invalid source clipping property name. Use letters, numbers, hyphens, or underscores.");
+		}
+
+		if (!propertyNamePattern.test(this.settings.noteLinksProperty)) {
+			throw new Error("Invalid clipping note links property name. Use letters, numbers, hyphens, or underscores.");
+		}
+
+		if (!propertyNamePattern.test(this.settings.processedFlagField)) {
+			throw new Error("Invalid processed flag property name. Use letters, numbers, hyphens, or underscores.");
+		}
+
+		if (!propertyNamePattern.test(this.settings.processedAtField)) {
+			throw new Error("Invalid processed timestamp property name. Use letters, numbers, hyphens, or underscores.");
+		}
+
 		if (this.settings.provider !== "mock" && !this.hasApiKey()) {
 			throw new Error(`API key is required for ${this.settings.provider} provider. Please configure it in settings.`);
 		}
@@ -93,10 +120,10 @@ export class ExtractionWorkflow {
 		}
 	}
 
-	private async addAtomicNotesLinksToClipping(clippingFile: TFile, atomicNotePaths: string[]): Promise<void> {
+	private async addAtomicNotesLinksToClipping(clippingFile: TFile, atomicNoteLinks: string[]): Promise<void> {
 		try {
 			const content = await this.plugin.app.vault.read(clippingFile);
-			const updatedContent = this.updateClippingWithAtomicNoteLinks(content, atomicNotePaths);
+			const updatedContent = this.updateClippingWithAtomicNoteLinks(content, atomicNoteLinks);
 			await this.plugin.app.vault.modify(clippingFile, updatedContent);
 		} catch (error) {
 			console.warn(`Failed to add atomic note links to clipping ${clippingFile.path}:`, error);
@@ -104,7 +131,7 @@ export class ExtractionWorkflow {
 		}
 	}
 
-	private updateClippingWithAtomicNoteLinks(content: string, atomicNotePaths: string[]): string {
+	private updateClippingWithAtomicNoteLinks(content: string, atomicNoteLinks: string[]): string {
 		const lines = content.split("\n");
 
 		// Remove any existing Atomic Notes section
@@ -126,18 +153,19 @@ export class ExtractionWorkflow {
 		}
 
 		// Add the new Atomic Notes section at the end
-		if (atomicNotePaths.length > 0) {
-			const atomicNoteLinks = atomicNotePaths
-				.map(path => {
-					const filename = path.split("/").pop()?.replace(/\.md$/, "") || path;
-					return `- [[${filename}]]`;
-				})
-				.join("\n");
-
-			lines.push("", "## Atomic Notes", "", atomicNoteLinks);
+		if (atomicNoteLinks.length > 0) {
+			const listContent = atomicNoteLinks.map((link) => `- ${link}`).join("\n");
+			lines.push("", "## Atomic Notes", "", listContent);
 		}
 
 		return lines.join("\n");
+	}
+
+	private buildNoteLinks(notePaths: string[], notes: ReturnType<AtomicNoteBuilder["build"]>): string[] {
+		return notePaths.map((path, index) => {
+			const note = notes[index];
+			return formatWikiLink(path, note.title, this.settings.sourceLinkFormat);
+		});
 	}
 
 	private formatErrorMessage(error: unknown): string {

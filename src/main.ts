@@ -40,14 +40,14 @@ export default class AtomicNotesPlugin extends Plugin {
 		);
 
 		// Add ribbon button to toggle sidebar
-		this.addRibbonIcon("document", "Atomic Notes", () => {
+		this.addRibbonIcon("notebook", "Open ANEx Sidebar", () => {
 			this.toggleSidebar();
 		});
 
 		// Add sidebar toggle command
 		this.addCommand({
-			id: "toggle-sidebar",
-			name: "Toggle Atomic Notes Sidebar",
+			id: "anex-toggle-sidebar",
+			name: "Toggle Sidebar",
 			callback: () => this.toggleSidebar(),
 		});
 	}
@@ -94,6 +94,7 @@ export default class AtomicNotesPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+		this.folderWatcher?.syncWatching(this.settings.autoWatchClippings);
 	}
 
 	private async toggleSidebar(): Promise<void> {

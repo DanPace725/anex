@@ -7,7 +7,7 @@ Place this in your repo under:
 
 ---
 
-# 📘 **Atomic Notes Extraction Plugin — Overview, Goal, Plan**
+# 📘 **Atomic Notes Extraction Plugin (ANEx) — Overview, Goal, Plan**
 
 **Location:** `agents/docs/atomic-notes-extractor.md`
 **Audience:** LLM coding agents working on the plugin
@@ -17,7 +17,7 @@ Place this in your repo under:
 
 # **1. Overview**
 
-The Atomic Notes Extraction Plugin is a **modular Obsidian plugin** (or equivalent JS-based extension) that converts *raw clippings* into **clean, structured atomic notes** through an LLM-assisted extraction step.
+The Atomic Notes Extraction Plugin (**ANEx**) is a **modular Obsidian plugin** (or equivalent JS-based extension) that converts *raw clippings* into **clean, structured atomic notes** through an LLM-assisted extraction step.
 
 It is the **first stage** in a larger relational workflow.
 Its job is **only extraction**.

@@ -1,5 +1,4 @@
-import { Plugin, TFile, TFolder } from "obsidian";
-import { Notice } from "obsidian";
+import { Notice, Plugin, TFile, TFolder } from "obsidian";
 import { AnexSettings } from "../settings";
 import { ClippingService } from "./clippingService";
 import { ExtractionWorkflow } from "../workflows/extractionWorkflow";
@@ -11,6 +10,7 @@ function normalizeFolder(folder: string): string {
 
 export class FolderWatcherService {
 	private processingFiles = new Set<string>();
+	private isWatching = false;
 
 	constructor(
 		private plugin: Plugin,
@@ -21,9 +21,10 @@ export class FolderWatcherService {
 	) {}
 
 	startWatching(): void {
-		if (!this.settings.autoWatchClippings) {
-			return;
-		}
+		if (!this.settings.autoWatchClippings) return;
+		if (this.isWatching) return;
+
+		this.isWatching = true;
 
 		// Watch for file creation in the clippings folder
 		this.plugin.registerEvent(
@@ -51,6 +52,21 @@ export class FolderWatcherService {
 				}
 			})
 		);
+	}
+
+	stopWatching(): void {
+		// Event cleanup is handled automatically by Obsidian's registerEvent system
+		this.isWatching = false;
+	}
+
+	syncWatching(enabled: boolean): void {
+		if (!enabled) {
+			this.stopWatching();
+			return;
+		}
+
+		if (this.isWatching) return;
+		this.startWatching();
 	}
 
 	private async handleFileCreated(file: TFile): Promise<void> {

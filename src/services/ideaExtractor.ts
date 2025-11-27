@@ -13,12 +13,14 @@ export class IdeaExtractor {
 		const rawIdeas = await this.provider.extractIdeas(clipping, {
 			minIdeas: this.settings.minIdeas,
 			maxIdeas: this.settings.maxIdeas,
+			customPrompt: this.settings.customExtractionPrompt.trim() || undefined,
 		});
 
 		return validateIdeas(rawIdeas, {
 			minIdeas: this.settings.minIdeas,
 			maxIdeas: this.settings.maxIdeas,
 			maxSentencesPerIdea: 2,
+			convertSpacesToHyphens: this.settings.convertTagSpacesToHyphens,
 		});
 	}
 }

@@ -1,10 +1,10 @@
-# Atomic Notes Extractor (ANEX)
+# ANEx (Atomic Notes Extractor)
 
-An Obsidian plugin that automatically converts raw clippings into structured atomic notes using LLM-powered extraction. Follows RSA-Core principles for modular, predictable knowledge processing.
+An Obsidian plugin that automatically converts raw clippings into structured atomic notes using LLM-powered extraction. ANEx follows RSA-Core principles for modular, predictable knowledge processing.
 
 ## Overview
 
-**Atomic Notes Extractor** transforms raw text clippings into clean, structured atomic notes. Each clipping becomes 3-8 focused notes (1-2 sentences each) with labels, tags, and full traceability.
+**ANEx (Atomic Notes Extractor)** transforms raw text clippings into clean, structured atomic notes. Each clipping becomes 3-8 focused notes (1-2 sentences each) with labels, tags, and full traceability.
 
 **Core Workflow:** Clipping → Extracted Ideas → Atomic Notes → Written Files → Processed Marker
 
@@ -40,45 +40,51 @@ npm run build
 
 ## Quick Start
 
-1. **Set up folders**: Create `Clippings` and `AtomicNotes` folders in your vault
-2. **Configure provider**: Go to Settings → Atomic Notes Extractor and choose your LLM provider
+1. **Set up folders**: Create `ingest/clippings` and `ingest/anex` folders (or set your own paths in settings)
+2. **Configure provider**: Go to Settings → ANEx and choose your LLM provider
 3. **Add API key**: Enter your API key for the chosen provider
-4. **Create a clipping**: Add a text file to your `Clippings` folder
-5. **Extract notes**: Use the command palette to run "Extract atomic notes from active file"
+4. **Create a clipping**: Add a text file to your `ingest/clippings` folder
+5. **Extract notes**: Use the command palette to run "ANEx: Extract Active File"
 
 ## Usage
 
 ### Sidebar Dashboard
-- **Ribbon Button**: Click the document icon in the left sidebar to open the Atomic Notes panel
-- **Command Palette**: "Toggle Atomic Notes Sidebar" to show/hide the interface
+- **Ribbon Button**: Click the notebook icon in the left sidebar to open the ANEx panel
+- **Command Palette**: "ANEx: Toggle Sidebar" to show/hide the interface
 - **Live Status**: View clipping counts, processing progress, and quick actions
 
 ### Manual Processing
 - Open a clipping file in Obsidian
-- Use Command Palette: **"Extract atomic notes from active file"**
+- Use Command Palette: **"ANEx: Extract Active File"**
 - Or use the sidebar's quick actions for batch processing
 
 ### Batch Processing
 - Sidebar: Click **"Process All Unprocessed"** button
-- Command Palette: **"Process all unprocessed clippings in folder"**
+- Command Palette: **"ANEx: Extract from Clippings Folder"**
 - Processes all unprocessed files with live progress updates
 
 ### Automatic Processing
-- Enable "Auto-watch clippings folder" in settings
+- Toggle **Auto-watch clippings folder** on in settings (off by default to avoid surprises)
 - New files added to your clippings folder (including drag-and-drop) are processed automatically
-- Robust event handling for create, modify, and rename operations
+- Robust event handling for create, modify, and rename operations, and can be disabled instantly from settings
 
 ## Settings
 
 ### Core Settings
-- **Clipping folder**: Path to monitor for new clippings (default: `Clippings`)
-- **Output folder**: Where atomic notes are saved (default: `AtomicNotes`)
-- **Processed flag field**: Frontmatter field name for tracking processed status (default: `atomicNotesProcessed`)
-- **Auto-watch clippings folder**: Enable automatic processing of new files
+- **Clipping folder**: Path to monitor for new clippings (default: `ingest/clippings`)
+- **Output folder**: Where atomic notes are saved (default: `ingest/anex`)
+- **Processed flag field**: Frontmatter field name for tracking processed status (default: `Processed`)
+- **Processed timestamp field**: Frontmatter field name for when the clipping was processed (default: `ProcessedAt`)
+- **Auto-watch clippings folder**: Enable/disable automatic processing of new files (off by default)
+- **Clipping note links property**: Frontmatter property for backlinks to generated notes (default: `anex_notes`)
+- **Source clipping property**: Frontmatter property on notes storing the source link (default: `source_clipping`)
+- **Source link format**: Choose between `[[filename]]` or `[[path/to/file|Title]]`
 
 ### Extraction Settings
 - **Min/Max ideas**: Control the number of atomic notes per clipping (3-8 recommended)
 - **Allow overwrite**: Replace existing atomic note files on conflicts
+- **Sanitize tags**: Convert spaces to hyphens and strip invalid characters
+- **Custom extraction prompt**: Override the built-in prompt when needed
 
 ### LLM Providers
 - **Provider**: Choose OpenAI, Anthropic, Google (Gemini), or Mock
@@ -87,7 +93,7 @@ npm run build
 
 ## Sidebar Interface
 
-The Atomic Notes sidebar provides comprehensive control and monitoring:
+The ANEx sidebar provides comprehensive control and monitoring:
 
 ### Features
 - **📊 Live Status**: Real-time counts of total, processed, and unprocessed clippings
@@ -97,8 +103,8 @@ The Atomic Notes sidebar provides comprehensive control and monitoring:
 - **🎯 Error Handling**: Clear feedback for missing folders or access issues
 
 ### Access Methods
-- **Ribbon Button**: Document icon in left sidebar (like other plugins)
-- **Command Palette**: "Toggle Atomic Notes Sidebar"
+- **Ribbon Button**: Notebook icon in left sidebar (like other plugins)
+- **Command Palette**: "ANEx: Toggle Sidebar"
 - **Keyboard**: Assign hotkey to the toggle command
 
 ### Status Indicators
@@ -115,28 +121,24 @@ Each atomic note is saved as a separate Markdown file with bidirectional linking
 ```yaml
 ---
 title: Idea Label
-sourceClippingId: Clippings/my-clipping.md
+source_clipping: [[/ingest/clippings/my-clipping|My Clipping]]
 created: 2024-01-15T10:30:00.000Z
 tags: [topic1, topic2]
 ---
 
 The atomic idea content goes here, typically 1-2 sentences focusing on a single concept.
-
-**Source:** [[my-clipping]]
 ```
 
 ### Source Clipping Updates
-After processing, source clippings gain an "Atomic Notes" section:
+After processing, source clippings gain a frontmatter property with backlinks to generated notes:
 
-```markdown
-## Atomic Notes
-
-- [[idea-1]]
-- [[idea-2]]
-- [[idea-3]]
+```yaml
+anex_notes:
+  - [[/ingest/anex/idea-1|Idea 1]]
+  - [[/ingest/anex/idea-2|Idea 2]]
 ```
 
-This creates a navigable web of connections between your source material and extracted insights.
+You can optionally append a footer section of links via settings if you prefer visible in-body backlinks.
 
 ## Providers
 
@@ -192,7 +194,7 @@ npm run build  # Production build
 - **"File already exists"**: Enable "Allow overwrite" or rename conflicting files
 - **"Clippings folder not found"**: Create the folder or update the path in settings
 - **"Too many/few ideas extracted"**: Adjust min/max idea settings or check LLM response
-- **Sidebar not showing**: Use ribbon button or "Toggle Atomic Notes Sidebar" command
+- **Sidebar not showing**: Use ribbon button or "ANEx: Toggle Sidebar" command
 - **Links not working**: Ensure filenames don't contain special characters
 - **Empty files**: Check that your clipping contains readable text content
 

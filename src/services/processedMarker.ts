@@ -2,7 +2,7 @@ import { Plugin, TFile } from "obsidian";
 import { AnexSettings } from "../settings";
 
 export interface ProcessedMarkerPayload {
-	notePaths?: string[];
+	noteLinks?: string[];
 }
 
 export class ProcessedMarkerService {
@@ -24,9 +24,9 @@ export class ProcessedMarkerService {
 
 		await this.plugin.app.fileManager.processFrontMatter(file, (frontmatter) => {
 			frontmatter[this.settings.processedFlagField] = true;
-			frontmatter[`${this.settings.processedFlagField}At`] = new Date().toISOString();
-			if (payload.notePaths?.length) {
-				frontmatter[`${this.settings.processedFlagField}Notes`] = payload.notePaths;
+			frontmatter[this.settings.processedAtField] = new Date().toISOString();
+			if (this.settings.storeNoteLinksInFrontmatter && payload.noteLinks?.length) {
+				frontmatter[this.settings.noteLinksProperty] = payload.noteLinks;
 			}
 		});
 	}

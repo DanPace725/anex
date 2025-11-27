@@ -1,16 +1,25 @@
 export type ProcessedMarkerStrategy = "frontmatter";
 
 export type ProviderType = "openai" | "anthropic" | "google" | "mock";
+export type SourceLinkFormat = "filename" | "pathWithTitle";
 
 export interface AnexSettings {
 	clippingFolder: string;
 	outputFolder: string;
 	processedFlagField: string;
+	processedAtField: string;
 	processedMarkerStrategy: ProcessedMarkerStrategy;
 	maxIdeas: number;
 	minIdeas: number;
 	allowOverwrite: boolean;
 	autoWatchClippings: boolean;
+	storeNoteLinksInFrontmatter: boolean;
+	noteLinksProperty: string;
+	writeNoteLinksToFooter: boolean;
+	sourceClippingPropertyName: string;
+	sourceLinkFormat: SourceLinkFormat;
+	convertTagSpacesToHyphens: boolean;
+	customExtractionPrompt: string;
 	provider: ProviderType;
 	openAIApiKey: string;
 	openAIModel: string;
@@ -21,14 +30,22 @@ export interface AnexSettings {
 }
 
 export const DEFAULT_SETTINGS: AnexSettings = {
-	clippingFolder: "Clippings",
-	outputFolder: "AtomicNotes",
-	processedFlagField: "atomicNotesProcessed",
+	clippingFolder: "ingest/clippings",
+	outputFolder: "ingest/anex",
+	processedFlagField: "Processed",
+	processedAtField: "ProcessedAt",
 	processedMarkerStrategy: "frontmatter",
 	maxIdeas: 6,
 	minIdeas: 3,
 	allowOverwrite: false,
-	autoWatchClippings: true,
+	autoWatchClippings: false,
+	storeNoteLinksInFrontmatter: true,
+	noteLinksProperty: "anex_notes",
+	writeNoteLinksToFooter: false,
+	sourceClippingPropertyName: "source_clipping",
+	sourceLinkFormat: "filename",
+	convertTagSpacesToHyphens: true,
+	customExtractionPrompt: "",
 	provider: "openai",
 	openAIApiKey: "",
 	openAIModel: "gpt-4o-mini",

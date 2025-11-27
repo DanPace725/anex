@@ -17,5 +17,6 @@ export interface AtomicNote {
 	body: string;
 	tags: string[];
 	sourceClippingId: string;
+	sourceTitle: string;
 	timestamp: number;
 }

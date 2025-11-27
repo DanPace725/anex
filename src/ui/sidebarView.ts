@@ -28,17 +28,24 @@ export class AtomicNotesSidebar extends ItemView {
 	}
 
 	getDisplayText(): string {
-		return "Atomic Notes";
+		return "ANEx";
 	}
 
 	getIcon(): string {
-		return "document";
+		return "notebook";
 	}
 
 	async onOpen(): Promise<void> {
-		await this.render();
+		await this.refresh();
+		const refresh = () => { void this.refresh(); };
+
 		// Refresh every 5 seconds to show updated status
-		this.refreshInterval = setInterval(() => this.render(), 5000);
+		this.refreshInterval = setInterval(refresh, 5000);
+
+		this.registerEvent(this.app.metadataCache.on("changed", refresh));
+		this.registerEvent(this.app.vault.on("create", refresh));
+		this.registerEvent(this.app.vault.on("delete", refresh));
+		this.registerEvent(this.app.vault.on("rename", refresh));
 	}
 
 	async onClose(): Promise<void> {
@@ -47,7 +54,7 @@ export class AtomicNotesSidebar extends ItemView {
 		}
 	}
 
-	private async render(): Promise<void> {
+	async refresh(): Promise<void> {
 		const container = this.containerEl.children[1];
 		container.empty();
 
@@ -55,7 +62,7 @@ export class AtomicNotesSidebar extends ItemView {
 
 		// Header
 		const header = container.createEl("div", { cls: "sidebar-header" });
-		header.createEl("h3", { text: "Atomic Notes Extractor" });
+		header.createEl("h3", { text: "ANEx — Atomic Notes Extractor" });
 
 		// Status section
 		const statusSection = container.createEl("div", { cls: "sidebar-section" });
@@ -172,7 +179,7 @@ export class AtomicNotesSidebar extends ItemView {
 				processAllBtn.disabled = true;
 				processAllBtn.textContent = "Processing...";
 				await this.folderWatcher.processAllUnprocessedFiles();
-				await this.render(); // Refresh the view
+				await this.refresh(); // Refresh the view
 			} catch (error) {
 				new Notice(`Failed to process files: ${error}`);
 			} finally {
@@ -187,7 +194,7 @@ export class AtomicNotesSidebar extends ItemView {
 			cls: "sidebar-button secondary"
 		});
 		refreshBtn.addEventListener("click", () => {
-			this.render();
+			void this.refresh();
 		});
 	}
 }

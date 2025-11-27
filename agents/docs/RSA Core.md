@@ -19,6 +19,7 @@ It reads like a practical design-guide.
 **Location:** `agents/docs/rsa-core.md`
 **Audience:** LLM coding agents, architectural assistants, codegen models
 **Purpose:** Provide a consistent conceptual vocabulary for designing clean, modular, relationally-sound systems.
+**Notes:** Applied directly within the ANEx (Atomic Notes Extractor) plugin and related tooling.
 
 ---
 

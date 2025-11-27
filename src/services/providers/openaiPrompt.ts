@@ -10,6 +10,8 @@ export function buildOpenAIExtractionMessages(
 	clipping: Clipping,
 	context: ExtractionContext
 ): OpenAIExtractionMessages {
+	const customPrompt = context.customPrompt?.trim();
+
 	const system = [
 		"You extract concise atomic ideas from clippings.",
 		"Return only JSON; no prose or Markdown.",
@@ -17,7 +19,8 @@ export function buildOpenAIExtractionMessages(
 		`Return between ${context.minIdeas} and ${context.maxIdeas} ideas.`,
 		"Fields: label (string), idea (string), tags (optional string array).",
 		"Never invent content; stay faithful to the clipping.",
-	].join(" ");
+		customPrompt ? `Custom instructions: ${customPrompt}` : undefined,
+	].filter((line): line is string => Boolean(line)).join(" ");
 
 	const user = [
 		"Extract distinct atomic ideas from this clipping and return a JSON array.",

@@ -1,4 +1,4 @@
-# 📘 **RSA-Core Implementation Analysis: Atomic Notes Extractor**
+# 📘 **RSA-Core Implementation Analysis: Atomic Notes Extractor (ANEx)**
 
 **Location:** `agents/docs/rsa-implementation-analysis.md`
 **Audience:** AI coding agents, developers implementing RSA-Core systems
@@ -8,7 +8,7 @@
 
 ## **Overview**
 
-This document analyzes how the Atomic Notes Extractor plugin was built following RSA-Core architectural principles. Each section provides specific code examples showing how abstract RSA concepts were translated into concrete implementation patterns.
+This document analyzes how the Atomic Notes Extractor (**ANEx**) plugin was built following RSA-Core architectural principles. Each section provides specific code examples showing how abstract RSA concepts were translated into concrete implementation patterns.
 
 The plugin serves as a practical case study of RSA-Core application, demonstrating how to build clean, modular systems that maintain architectural integrity while delivering functional value.
 

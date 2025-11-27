@@ -4,12 +4,15 @@ export interface IdeaValidationOptions {
 	minIdeas: number;
 	maxIdeas: number;
 	maxSentencesPerIdea?: number;
+	convertSpacesToHyphens?: boolean;
 }
 
 export function validateIdeas(
 	ideas: ExtractedIdea[],
 	options: IdeaValidationOptions
 ): ExtractedIdea[] {
+	const convertSpaces = options.convertSpacesToHyphens ?? true;
+
 	// First, filter out invalid ideas and those exceeding sentence limits
 	const validIdeas = ideas
 		.filter((idea) => {
@@ -29,7 +32,9 @@ export function validateIdeas(
 		})
 		.map((idea) => ({
 			...idea,
-			tags: idea.tags?.map((tag) => tag.trim()).filter(Boolean) ?? [],
+			tags: idea.tags
+				?.map((tag) => sanitizeTag(tag, convertSpaces))
+				.filter(Boolean) ?? [],
 		}));
 
 	// Check if we have enough valid ideas
@@ -56,4 +61,15 @@ export function validateIdeas(
 function withinSentenceLimit(text: string, limit: number): boolean {
 	const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 0);
 	return sentences.length <= limit;
+}
+
+function sanitizeTag(tag: string, convertSpaces: boolean): string {
+	const spaceNormalized = convertSpaces ? tag.replace(/\s+/g, "-") : tag;
+	const stripped = spaceNormalized
+		.replace(/[\\/\\.]/g, "-")
+		.replace(/[^A-Za-z0-9_-]/g, "-")
+		.replace(/-+/g, "-")
+		.replace(/^-+|-+$/g, "");
+
+	return stripped.trim();
 }

@@ -1,5 +1,12 @@
 import { normalizePath, Plugin, TFile } from "obsidian";
 import { AtomicNote } from "../types/entities";
+import { SourceLinkFormat } from "../settings";
+import { formatWikiLink } from "../utils/links";
+
+interface NoteWriterOptions {
+	sourcePropertyName: string;
+	sourceLinkFormat: SourceLinkFormat;
+}
 
 export class AtomicNoteWriter {
 	constructor(private plugin: Plugin) {}
@@ -8,7 +15,8 @@ export class AtomicNoteWriter {
 		notes: AtomicNote[],
 		folderPath: string,
 		allowOverwrite: boolean,
-		filenameFor: (note: AtomicNote) => string
+		filenameFor: (note: AtomicNote) => string,
+		options: NoteWriterOptions
 	): Promise<string[]> {
 		const targetFolder = normalizePath(folderPath);
 		await this.ensureFolder(targetFolder);
@@ -24,7 +32,7 @@ export class AtomicNoteWriter {
 				throw new Error(`Atomic note "${filename}" already exists. Enable "Allow overwrite" in settings to replace it, or rename the file.`);
 			}
 
-			const content = this.renderNote(note);
+			const content = this.renderNote(note, options);
 			if (existing instanceof TFile && allowOverwrite) {
 				await this.plugin.app.vault.modify(existing, content);
 			} else {
@@ -45,11 +53,13 @@ export class AtomicNoteWriter {
 		}
 	}
 
-	private renderNote(note: AtomicNote): string {
+	private renderNote(note: AtomicNote, options: NoteWriterOptions): string {
+		const sourceLink = this.formatSourceLink(note, options.sourceLinkFormat).replace(/"/g, '\\"');
+
 		const lines = [
 			"---",
 			`title: ${note.title}`,
-			`sourceClippingId: ${note.sourceClippingId}`,
+			`${options.sourcePropertyName}: "${sourceLink}"`,
 			`created: ${new Date(note.timestamp).toISOString()}`,
 		];
 
@@ -60,17 +70,10 @@ export class AtomicNoteWriter {
 
 		lines.push("---", "", note.body);
 
-		// Add source link
-		const sourceFilename = this.getFilenameFromPath(note.sourceClippingId);
-		lines.push("", `**Source:** [[${sourceFilename}]]`);
-
 		return lines.join("\n");
 	}
 
-	private getFilenameFromPath(path: string): string {
-		// Extract filename from path, removing extension if it's .md
-		const parts = path.split("/");
-		const filename = parts[parts.length - 1];
-		return filename.replace(/\.md$/, "");
+	private formatSourceLink(note: AtomicNote, format: SourceLinkFormat): string {
+		return formatWikiLink(note.sourceClippingId, note.sourceTitle, format);
 	}
 }

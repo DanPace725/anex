@@ -12,7 +12,7 @@ export class StatusIndicatorService {
 
 	private addStatusBarItem(): void {
 		this.statusBarItem = this.plugin.addStatusBarItem();
-		this.statusBarItem.setText("ANEX: Idle");
+		this.statusBarItem.setText("ANEx: Idle");
 		this.statusBarItem.addClass("anex-status-bar");
 		this.updateStatusDisplay();
 	}
@@ -47,15 +47,15 @@ export class StatusIndicatorService {
 		if (!this.statusBarItem) return;
 
 		if (this.processingFiles.size === 0) {
-			this.statusBarItem.setText("ANEX: Idle");
+			this.statusBarItem.setText("ANEx: Idle");
 			this.statusBarItem.removeClass("processing");
 		} else if (this.processingFiles.size === 1) {
 			const filePath = Array.from(this.processingFiles)[0];
 			const fileName = filePath.split('/').pop() || filePath;
-			this.statusBarItem.setText(`ANEX: Processing "${fileName}"`);
+			this.statusBarItem.setText(`ANEx: Processing "${fileName}"`);
 			this.statusBarItem.addClass("processing");
 		} else {
-			this.statusBarItem.setText(`ANEX: Processing ${this.processingFiles.size} files`);
+			this.statusBarItem.setText(`ANEx: Processing ${this.processingFiles.size} files`);
 			this.statusBarItem.addClass("processing");
 		}
 	}

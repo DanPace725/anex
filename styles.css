@@ -1,8 +1,174 @@
-/*
+/* Atomic Notes Extractor Plugin Styles */
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+/* Status Bar Indicator */
+.anex-status-bar {
+    font-size: 0.8em;
+    padding: 2px 8px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
 
-If your plugin does not need CSS, delete this file.
+.anex-status-bar.processing {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    font-weight: 500;
+    animation: anex-pulse 2s ease-in-out infinite;
+}
 
-*/
+@keyframes anex-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Optional: Add some visual feedback for file processing in the file explorer */
+.anex-processing-file::before {
+    content: "🔄 ";
+    opacity: 0.7;
+}
+
+.anex-processed-file::before {
+    content: "✅ ";
+    opacity: 0.5;
+}
+
+/* Sidebar Styles */
+.atomic-notes-sidebar {
+    padding: 1rem;
+    font-size: 0.9em;
+}
+
+.sidebar-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    color: var(--text-normal);
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.sidebar-section {
+    margin-bottom: 1.5rem;
+}
+
+.sidebar-section h4 {
+    margin: 0 0 0.75rem 0;
+    color: var(--text-muted);
+    font-size: 0.9em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.status-item {
+    text-align: center;
+    padding: 0.75rem;
+    background-color: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+}
+
+.status-number {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: var(--text-normal);
+    margin-bottom: 0.25rem;
+}
+
+.status-number.processed {
+    color: var(--text-success);
+}
+
+.status-number.unprocessed {
+    color: var(--text-warning);
+}
+
+.status-label {
+    font-size: 0.8em;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.progress-container {
+    position: relative;
+    height: 8px;
+    background-color: var(--background-modifier-border);
+    border-radius: 4px;
+    margin: 0.75rem 0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--interactive-accent);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    text-align: center;
+    font-size: 0.8em;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.sidebar-button {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background-color: var(--background-primary);
+    color: var(--text-normal);
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+}
+
+.sidebar-button:hover {
+    background-color: var(--background-modifier-hover);
+    border-color: var(--interactive-accent);
+}
+
+.sidebar-button.primary {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-color: var(--interactive-accent);
+}
+
+.sidebar-button.primary:hover {
+    background-color: var(--interactive-accent-hover);
+}
+
+.sidebar-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.sidebar-button.secondary {
+    background-color: var(--background-secondary);
+}
+
+.error-message {
+    color: var(--text-error);
+    font-size: 0.85em;
+    padding: 0.5rem;
+    background-color: var(--background-modifier-error);
+    border: 1px solid var(--text-error);
+    border-radius: 4px;
+    margin: 0.5rem 0;
+}

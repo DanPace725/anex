@@ -1,11 +1,9 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "anex",
+	"name": "Atomic Notes Extractor",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Transform raw clippings into structured atomic notes with LLM-powered extraction, bidirectional linking, and comprehensive monitoring.",
+	"author": "TikTok Library",
 	"isDesktopOnly": false
 }

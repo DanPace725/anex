@@ -164,7 +164,7 @@
 }
 
 .error-message {
-    color: var(--text-error);
+    color: var(--text-normal);
     font-size: 0.85em;
     padding: 0.5rem;
     background-color: var(--background-modifier-error);

@@ -131,9 +131,15 @@ export class AtomicNotesSidebar extends ItemView {
 
 	private renderStatus(container: Element, status: Awaited<ReturnType<typeof this.getClippingsStatus>>): void {
 		if (!status.folderExists) {
-			container.createEl("div", {
-				text: `Clippings folder "${this.settings.clippingFolder}" not found`,
-				cls: "error-message"
+			const error = container.createEl("div", { cls: "error-message" });
+			error.createEl("div", {
+				text: "Clippings folder not found.",
+			});
+			error.createEl("div", {
+				text: `Expected folder: "${this.settings.clippingFolder}".`,
+			});
+			error.createEl("div", {
+				text: "Create this folder in your vault or update the Clipping folder path in ANEx settings.",
 			});
 			return;
 		}

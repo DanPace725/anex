@@ -4,7 +4,7 @@ An Obsidian plugin that automatically converts raw clippings into structured ato
 
 ## Overview
 
-**ANEx (Atomic Notes Extractor)** transforms raw text clippings into clean, structured atomic notes. Each clipping becomes 3-8 focused notes (1-2 sentences each) with labels, tags, and full traceability.
+**ANEx (Atomic Notes Extractor)** transforms raw text clippings into clean, structured atomic notes. Each clipping becomes a small set of focused notes (typically 3–6) with 1–2 sentence concept summaries, labels, tags, and full traceability.
 
 **Core Workflow:** Clipping → Extracted Ideas → Atomic Notes → Written Files → Processed Marker
 
@@ -81,10 +81,10 @@ npm run build
 - **Source link format**: Choose between `[[filename]]` or `[[path/to/file|Title]]`
 
 ### Extraction Settings
-- **Min/Max ideas**: Control the number of atomic notes per clipping (3-8 recommended)
+- **Min/Target/Max ideas**: Control the number of atomic notes per clipping (ANEx asks the model to aim for the target within the min/max range)
 - **Allow overwrite**: Replace existing atomic note files on conflicts
 - **Sanitize tags**: Convert spaces to hyphens and strip invalid characters
-- **Custom extraction prompt**: Override the built-in prompt when needed
+- **Custom extraction prompt**: Optionally add extra instructions on top of the built-in prompt (which already defines atomic notes, count range, and non-duplication rules)
 
 ### LLM Providers
 - **Provider**: Choose OpenAI, Anthropic, Google (Gemini), or Mock
@@ -140,6 +140,8 @@ anex_notes:
 
 You can optionally append a footer section of links via settings if you prefer visible in-body backlinks.
 
+ANEx may also take advantage of an existing summary section in your clipping (for example, a `## Summary` or `## General Summary` heading) to bias extraction toward the main conceptual ideas while still reading the full text.
+
 ## Providers
 
 ### OpenAI
@@ -193,7 +195,7 @@ npm run build  # Production build
 - **"API key is missing"**: Configure your API key in plugin settings
 - **"File already exists"**: Enable "Allow overwrite" or rename conflicting files
 - **"Clippings folder not found"**: Create the folder or update the path in settings
-- **"Too many/few ideas extracted"**: Adjust min/max idea settings or check LLM response
+- **"Too many/few ideas extracted"**: Adjust min/target/max idea settings or check LLM response
 - **Sidebar not showing**: Use ribbon button or "ANEx: Toggle Sidebar" command
 - **Links not working**: Ensure filenames don't contain special characters
 - **Empty files**: Check that your clipping contains readable text content

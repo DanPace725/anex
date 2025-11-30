@@ -160,7 +160,7 @@ export class AnexSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("OpenAI API key")
-			.setDesc("Stored locally; required for OpenAI provider.")
+			.setDesc("Stored locally; required for OpenAI provider. Changes are saved automatically.")
 			.addText((text) =>
 				text
 					.setPlaceholder("sk-...")
@@ -212,7 +212,7 @@ export class AnexSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Google API key")
-			.setDesc("Stored locally; required for Google provider (Gemini).")
+			.setDesc("Stored locally; required for Google provider (Gemini). Changes are saved automatically.")
 			.addText((text) =>
 				text
 					.setPlaceholder("AIza...")
@@ -237,6 +237,18 @@ export class AnexSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
+			.setName("Reload Obsidian")
+			.setDesc("Optional: reload the Obsidian app after changing provider or API keys to fully reinitialize ANEx and other plugins.")
+			.addButton((button) =>
+				button
+					.setButtonText("Reload app")
+					.onClick(() => {
+						// Obsidian runs in an Electron browser context; a full window reload will reinitialize all plugins.
+						window.location.reload();
+					})
+			);
+
+		new Setting(containerEl)
 			.setName("Min ideas per clipping")
 			.setDesc("Lower bound for ideas the model should return.")
 			.addText((text) =>
@@ -247,6 +259,22 @@ export class AnexSettingTab extends PluginSettingTab {
 						const parsed = parseInt(value, 10);
 						if (!Number.isNaN(parsed)) {
 							this.host.settings.minIdeas = parsed;
+							await this.host.saveSettings();
+						}
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Target ideas per clipping")
+			.setDesc("Preferred number of ideas the model should aim for (must be between min and max).")
+			.addText((text) =>
+				text
+					.setPlaceholder("5")
+					.setValue(String(this.host.settings.targetIdeas))
+					.onChange(async (value) => {
+						const parsed = parseInt(value, 10);
+						if (!Number.isNaN(parsed)) {
+							this.host.settings.targetIdeas = parsed;
 							await this.host.saveSettings();
 						}
 					})

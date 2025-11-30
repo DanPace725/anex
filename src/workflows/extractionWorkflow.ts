@@ -85,6 +85,15 @@ export class ExtractionWorkflow {
 			throw new Error("Invalid idea limits. Min ideas must be ≥ 1 and max ideas must be ≥ min ideas.");
 		}
 
+		if (
+			this.settings.targetIdeas < this.settings.minIdeas ||
+			this.settings.targetIdeas > this.settings.maxIdeas
+		) {
+			throw new Error(
+				"Invalid target ideas value. Target ideas must be between the configured minimum and maximum."
+			);
+		}
+
 		const propertyNamePattern = /^[A-Za-z0-9_-]+$/;
 		if (!propertyNamePattern.test(this.settings.sourceClippingPropertyName)) {
 			throw new Error("Invalid source clipping property name. Use letters, numbers, hyphens, or underscores.");

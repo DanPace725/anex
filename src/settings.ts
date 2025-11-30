@@ -11,6 +11,7 @@ export interface AnexSettings {
 	processedMarkerStrategy: ProcessedMarkerStrategy;
 	maxIdeas: number;
 	minIdeas: number;
+	targetIdeas: number;
 	allowOverwrite: boolean;
 	autoWatchClippings: boolean;
 	storeNoteLinksInFrontmatter: boolean;
@@ -37,6 +38,7 @@ export const DEFAULT_SETTINGS: AnexSettings = {
 	processedMarkerStrategy: "frontmatter",
 	maxIdeas: 6,
 	minIdeas: 3,
+	targetIdeas: 5,
 	allowOverwrite: false,
 	autoWatchClippings: false,
 	storeNoteLinksInFrontmatter: true,

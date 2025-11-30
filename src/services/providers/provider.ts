@@ -3,6 +3,7 @@ import { Clipping, ExtractedIdea } from "../../types/entities";
 export interface ExtractionContext {
 	minIdeas: number;
 	maxIdeas: number;
+	targetIdeas: number;
 	customPrompt?: string;
 }
 

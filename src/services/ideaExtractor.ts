@@ -13,6 +13,7 @@ export class IdeaExtractor {
 		const rawIdeas = await this.provider.extractIdeas(clipping, {
 			minIdeas: this.settings.minIdeas,
 			maxIdeas: this.settings.maxIdeas,
+			targetIdeas: this.settings.targetIdeas,
 			customPrompt: this.settings.customExtractionPrompt.trim() || undefined,
 		});
 

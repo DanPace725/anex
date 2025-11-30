@@ -169,6 +169,31 @@ export class AtomicNotesSidebar extends ItemView {
 	}
 
 	private renderQuickActions(container: Element): void {
+		// Extract active file button
+		const extractActiveBtn = container.createEl("button", {
+			text: "Extract Active File",
+			cls: "sidebar-button primary"
+		});
+		extractActiveBtn.addEventListener("click", async () => {
+			const file = this.app.workspace.getActiveFile();
+			if (!file) {
+				new Notice("No active file to extract.");
+				return;
+			}
+
+			try {
+				extractActiveBtn.disabled = true;
+				extractActiveBtn.textContent = "Extracting...";
+				await this.workflow.runOnFile(file);
+				await this.refresh();
+			} catch (error) {
+				new Notice(`Failed to extract active file: ${error}`);
+			} finally {
+				extractActiveBtn.disabled = false;
+				extractActiveBtn.textContent = "Extract Active File";
+			}
+		});
+
 		// Process all unprocessed button
 		const processAllBtn = container.createEl("button", {
 			text: "Process All Unprocessed",

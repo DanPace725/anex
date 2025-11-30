@@ -37,16 +37,19 @@ export function validateIdeas(
 				.filter(Boolean) ?? [],
 		}));
 
+	// Next, remove near-duplicate ideas that repeat the same core concept
+	const dedupedIdeas = dedupeIdeas(validIdeas);
+
 	// Check if we have enough valid ideas
-	if (validIdeas.length < options.minIdeas) {
+	if (dedupedIdeas.length < options.minIdeas) {
 		throw new Error(
-			`Only ${validIdeas.length} valid ideas found, but minimum required is ${options.minIdeas}. ` +
-			`Some ideas were filtered out due to validation failures.`
+			`Only ${dedupedIdeas.length} valid ideas found, but minimum required is ${options.minIdeas}. ` +
+			`Some ideas were filtered out due to validation or deduplication.`
 		);
 	}
 
 	// If we have too many, truncate to the maximum
-	const finalIdeas = validIdeas.slice(0, options.maxIdeas);
+	const finalIdeas = dedupedIdeas.slice(0, options.maxIdeas);
 
 	if (finalIdeas.length !== ideas.length) {
 		console.warn(
@@ -61,6 +64,54 @@ export function validateIdeas(
 function withinSentenceLimit(text: string, limit: number): boolean {
 	const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 0);
 	return sentences.length <= limit;
+}
+
+function normalizeIdeaText(text: string): string {
+	return text
+		.toLowerCase()
+		.replace(/[\u2018\u2019]/g, "'")
+		.replace(/[\u201C\u201D]/g, '"')
+		.replace(/[^a-z0-9\s]/g, " ")
+		.replace(/\s+/g, " ")
+		.trim();
+}
+
+function dedupeIdeas(ideas: ExtractedIdea[]): ExtractedIdea[] {
+	const result: ExtractedIdea[] = [];
+	const seen: string[] = [];
+
+	for (const idea of ideas) {
+		const normalized = normalizeIdeaText(idea.idea);
+		if (!normalized) continue;
+
+		let isDuplicate = false;
+		for (let i = 0; i < seen.length; i++) {
+			const existing = seen[i];
+			if (existing === normalized) {
+				isDuplicate = true;
+				break;
+			}
+
+			// If one idea's normalized text is almost contained in another, treat as duplicate
+			if (
+				existing.length > 40 &&
+				normalized.length > 40 &&
+				(existing.includes(normalized) || normalized.includes(existing))
+			) {
+				isDuplicate = true;
+				break;
+			}
+		}
+
+		if (!isDuplicate) {
+			seen.push(normalized);
+			result.push(idea);
+		} else {
+			console.warn(`Filtering out near-duplicate idea: "${idea.label}"`);
+		}
+	}
+
+	return result;
 }
 
 function sanitizeTag(tag: string, convertSpaces: boolean): string {

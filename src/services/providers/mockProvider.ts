@@ -5,7 +5,10 @@ export class MockProvider implements LLMProvider {
 	id = "mock";
 
 	async extractIdeas(clipping: Clipping, context: ExtractionContext): Promise<ExtractedIdea[]> {
-		const ideaCount = Math.min(Math.max(context.minIdeas, 1), context.maxIdeas);
+		const clampedMin = Math.max(context.minIdeas, 1);
+		const clampedMax = Math.max(clampedMin, context.maxIdeas);
+		const preferred = Math.max(clampedMin, Math.min(context.targetIdeas, clampedMax));
+		const ideaCount = preferred;
 		const ideas: ExtractedIdea[] = [];
 
 		for (let i = 0; i < ideaCount; i++) {

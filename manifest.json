@@ -4,6 +4,6 @@
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Transform raw clippings into structured atomic notes with LLM-powered extraction, bidirectional linking, and comprehensive monitoring.",
-	"author": "TikTok Library",
+	"author": "Daniel Pace",
 	"isDesktopOnly": false
 }

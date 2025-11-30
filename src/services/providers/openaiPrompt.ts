@@ -14,22 +14,24 @@ export function buildOpenAIExtractionMessages(
 	const summary = extractSummarySection(clipping.text);
 
 	const system = [
-		"You extract concise atomic ideas from clippings.",
+		"You extract concise, synthesized atomic ideas from clippings and transcipts.", 
+		"An atomic idea is a self-contained concept that does not need the rest of the clipping to make sense",
+		"Expand on ideas frequently. Lean on the side of expansion rather than just one sentence that doesn't make sense on it's own.",
 		"Return only JSON; no prose or Markdown.",
-		"Each idea is 1-2 sentences and has a short label (<= 6 words).",
 		`Return between ${context.minIdeas} and ${context.maxIdeas} ideas, aiming for about ${context.targetIdeas} distinct ideas.`,
-		"Prefer fewer, broader ideas over many small fragments when in doubt.",
-		"Never split one conceptual idea into multiple slightly-different ideas.",
+		"Prefer fewer, broader ideas over many small fragments when in doubt. Sentences should range from 2 to 5 depending on the complexity of the idea.",
+		"Never split one conceptual idea into multiple slightly-different ideas, ",
 		"Do not simply summarize the clipping, extract the ideas.",
+		"If the idea cannot stand on its own expand it to include the relevant context.",
 		"Fields: label (string), idea (string), tags (optional string array).",
-		"Never invent content; stay faithful to the clipping.",
+		"Never invent content; stay faithful to the clipping. Don't focus on any specific time period, pull salient content without regard to current year.",
 		customPrompt ? `Custom instructions: ${customPrompt}` : undefined,
 	].filter((line): line is string => Boolean(line)).join(" ");
 
 	const user = [
 		"Extract distinct atomic ideas from this clipping and return a JSON array.",
 		"Example shape:",
-		`[{"label":"Idea","idea":"One or two sentences.","tags":["topic"]}]`,
+		`[{"label":"Idea","idea":"Two to five sentences.","tags":["topic"]}]`,
 		summary
 			? [
 					"",
